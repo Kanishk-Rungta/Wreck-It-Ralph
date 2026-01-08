@@ -1,0 +1,42 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: wreckit_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: wreckit_backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/wreckitdb
+      - JWT_SECRET=YOUR_REAL_JWT_SECRET_CHANGE_THIS_IN_PRODUCTION
+      - FRONTEND_URL=http://localhost:3000
+      - GEMINI_API_KEY=YOUR_REAL_GEMINI_API_KEY_CHANGE_THIS
+      - PORT=5000
+
+  frontend:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: wreckit_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://backend:5000
+      - GEMINI_API_KEY=YOUR_REAL_GEMINI_API_KEY_CHANGE_THIS
+      - MONGODB_URI=mongodb://mongo:27017/wreckitdb
+      - NODE_ENV=production
+
+volumes:
+  mongo_data:
