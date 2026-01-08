@@ -78,9 +78,9 @@ Get SpendAhead running on your machine in minutes!
 ```
 
 ### Installation Steps
-
+```bash
 # ===============================
-# GenAI Receipt Reader – Setup
+# SpendAhead – Setup
 # ===============================
 
 # 1. Clone the repository
@@ -99,7 +99,7 @@ npm run dev
 New Terminal 
 cd Wreck-It-Ralph
 npm run dev
-
+```
 ### First Steps After Installation
 1. Visit http://localhost:3000
 
