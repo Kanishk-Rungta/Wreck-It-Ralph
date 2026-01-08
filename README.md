@@ -79,29 +79,65 @@ Get SpendAhead running on your machine in minutes!
 
 ### Installation Steps
 
-```bash
-# 1. Clone repository
+# ===============================
+# GenAI Receipt Reader – Setup
+# ===============================
+
+# 1. Clone the repository
 git clone https://github.com/vistanoop/genAi_receipt.git
 cd genAi_receipt
+
 
 # 2. Install frontend dependencies
 npm install
 
+# Install Axios for frontend API calls
+npm install axios
+
+
 # 3. Install backend dependencies
-cd backend && npm install && cd ..
+cd backend
+npm install
+
+# (Optional) If axios is used in backend as well
+npm install axios
+cd ..
+
 
 # 4. Start MongoDB
+# Linux / Windows
 mongod
-# Or on macOS: brew services start mongodb-community
 
-# 5. Configure environment variables (see detailed setup below)
+# macOS (recommended)
+brew services start mongodb-community
 
-# 6. Start backend (Terminal 1)
-cd backend && npm run dev
 
-# 7. Start frontend (Terminal 2)
+# 5. Configure environment variables
+# --------------------------------
+# Backend: backend/.env
+# Example:
+# PORT=5000
+# MONGO_URI=mongodb://127.0.0.1:27017/genai_receipt
+# JWT_SECRET=your_secret_key
+
+# Frontend: .env (if needed)
+# Example:
+# VITE_API_BASE_URL=http://localhost:5000/api
+
+
+# 6. Start backend server (Terminal 1)
+cd backend
 npm run dev
-```
+
+
+# 7. Start frontend server (Terminal 2)
+cd ..
+npm run dev
+
+
+# 8. Open application
+# Frontend: http://localhost:3000
+# Backend:  http://localhost:5000
 
 ### Access Application
 - **Frontend**: http://localhost:3000
