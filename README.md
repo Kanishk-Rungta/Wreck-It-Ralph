@@ -84,70 +84,24 @@ Get SpendAhead running on your machine in minutes!
 # ===============================
 
 # 1. Clone the repository
-git clone https://github.com/vistanoop/genAi_receipt.git
-cd genAi_receipt
+git clone https://github.com/Kanishk-Rungta/Wreck-It-Ralph.git
 
 
-# 2. Install frontend dependencies
-npm install
 
-# Install Axios for frontend API calls
-npm install axios
-
-
-# 3. Install backend dependencies
+# 2. Install backend dependencies
+NEW TERMINAL
+cd Wreck-It-Ralph
 cd backend
-npm install
-
-# (Optional) If axios is used in backend as well
 npm install axios
-cd ..
-
-
-# 4. Start MongoDB
-# Linux / Windows
-mongod
-
-# macOS (recommended)
-brew services start mongodb-community
-
-
-# 5. Configure environment variables
-# --------------------------------
-# Backend: backend/.env
-# Example:
-# PORT=5000
-# MONGO_URI=mongodb://127.0.0.1:27017/genai_receipt
-# JWT_SECRET=your_secret_key
-
-# Frontend: .env (if needed)
-# Example:
-# VITE_API_BASE_URL=http://localhost:5000/api
-
-
-# 6. Start backend server (Terminal 1)
-cd backend
 npm run dev
 
-
-# 7. Start frontend server (Terminal 2)
-cd ..
+# 3 .Install frontend dependencies
+New Terminal 
+cd Wreck-It-Ralph
 npm run dev
-
-
-# 8. Open application
-# Frontend: http://localhost:3000
-# Backend:  http://localhost:5000
-
-### Access Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000/api
 
 ### First Steps After Installation
 1. Visit http://localhost:3000
-2. Click "Sign Up" to create your account
-3. Complete the financial planner to set your budget
-4. Start adding expenses or scan your first receipt!
 
 ---
 
