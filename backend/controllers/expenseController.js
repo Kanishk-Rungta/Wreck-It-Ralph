@@ -1,4 +1,5 @@
 import Expense from '../models/Expense.js';
+import mongoose from 'mongoose';
 
 // @desc    Get all expenses for logged in user
 // @route   GET /api/expenses
@@ -85,20 +86,24 @@ export const updateExpense = async (req, res) => {
   try {
     const { amount, description, category, date } = req.body;
 
-    const expense = await Expense.findById(req.params.id);
+    // Validate ObjectId to prevent NoSQL injection
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    }
+
+    // Use findOne with both _id and user to prevent injection and ensure atomic check
+    const expense = await Expense.findOne({
+      _id: req.params.id,
+      user: req.userId,
+    });
 
     if (!expense) {
       return res.status(404).json({
         success: false,
         error: 'Expense not found',
-      });
-    }
-
-    // Make sure expense belongs to user
-    if (expense.user.toString() !== req.userId) {
-      return res.status(403).json({
-        success: false,
-        error: 'Not authorized to update this expense',
       });
     }
 
@@ -137,20 +142,24 @@ export const updateExpense = async (req, res) => {
 // @access  Private
 export const deleteExpense = async (req, res) => {
   try {
-    const expense = await Expense.findById(req.params.id);
+    // Validate ObjectId to prevent NoSQL injection
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid expense ID',
+      });
+    }
+
+    // Use findOne with both _id and user to prevent injection and ensure atomic check
+    const expense = await Expense.findOne({
+      _id: req.params.id,
+      user: req.userId,
+    });
 
     if (!expense) {
       return res.status(404).json({
         success: false,
         error: 'Expense not found',
-      });
-    }
-
-    // Make sure expense belongs to user
-    if (expense.user.toString() !== req.userId) {
-      return res.status(403).json({
-        success: false,
-        error: 'Not authorized to delete this expense',
       });
     }
 

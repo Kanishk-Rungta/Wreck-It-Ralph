@@ -1,4 +1,5 @@
 import Goal from '../models/Goal.js';
+import mongoose from 'mongoose';
 
 // @desc    Get all goals for logged in user
 // @route   GET /api/goals
@@ -87,20 +88,24 @@ export const updateGoal = async (req, res) => {
   try {
     const { name, targetAmount, currentAmount, monthlyContribution, targetDate, priority } = req.body;
 
-    const goal = await Goal.findById(req.params.id);
+    // Validate ObjectId to prevent NoSQL injection
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid goal ID',
+      });
+    }
+
+    // Use findOne with both _id and user to prevent injection and ensure atomic check
+    const goal = await Goal.findOne({
+      _id: req.params.id,
+      user: req.userId,
+    });
 
     if (!goal) {
       return res.status(404).json({
         success: false,
         error: 'Goal not found',
-      });
-    }
-
-    // Make sure goal belongs to user
-    if (goal.user.toString() !== req.userId) {
-      return res.status(403).json({
-        success: false,
-        error: 'Not authorized to update this goal',
       });
     }
 
@@ -142,20 +147,24 @@ export const updateGoal = async (req, res) => {
 // @access  Private
 export const deleteGoal = async (req, res) => {
   try {
-    const goal = await Goal.findById(req.params.id);
+    // Validate ObjectId to prevent NoSQL injection
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid goal ID',
+      });
+    }
+
+    // Use findOne with both _id and user to prevent injection and ensure atomic check
+    const goal = await Goal.findOne({
+      _id: req.params.id,
+      user: req.userId,
+    });
 
     if (!goal) {
       return res.status(404).json({
         success: false,
         error: 'Goal not found',
-      });
-    }
-
-    // Make sure goal belongs to user
-    if (goal.user.toString() !== req.userId) {
-      return res.status(403).json({
-        success: false,
-        error: 'Not authorized to delete this goal',
       });
     }
 
