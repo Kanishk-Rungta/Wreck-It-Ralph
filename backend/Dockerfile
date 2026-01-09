@@ -13,13 +13,14 @@ RUN npm install --only=prod
 # Copy all backend code
 COPY . .
 
-# Bake in environment variables directly into container
+# Set non-sensitive environment variables
 ENV NODE_ENV=production \
     MONGODB_URI="mongodb://mongo:27017/wreckitdb" \
-    JWT_SECRET="YOUR_REAL_JWT_SECRET" \
     FRONTEND_URL="http://localhost:3000" \
-    GEMINI_API_KEY="YOUR_REAL_GEMINI_API_KEY" \
     PORT=5000
+
+# JWT_SECRET and GEMINI_API_KEY should be provided via env_file in docker-compose.yml
+# or as environment variables at runtime - NEVER hardcode secrets in Dockerfile
 
 # Expose backend port
 EXPOSE 5000

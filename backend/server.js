@@ -21,8 +21,44 @@ if (!process.env.MONGODB_URI) {
   process.exit(1);
 }
 
+// Enforce JWT_SECRET requirement - fail fast if missing
 if (!process.env.JWT_SECRET) {
-  console.warn('⚠️  Warning: JWT_SECRET is not set. Using default (not secure for production!)');
+  console.error('❌ CRITICAL ERROR: JWT_SECRET environment variable is not set!');
+  console.error('JWT authentication cannot function without a secret.');
+  console.error('Please set JWT_SECRET in your .env file or environment variables.');
+  console.error('');
+  console.error('To generate a strong secret, run:');
+  console.error('  node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+  process.exit(1);
+}
+
+// Validate JWT_SECRET strength in production
+if (process.env.NODE_ENV === 'production') {
+  if (process.env.JWT_SECRET.length < 32) {
+    console.error('❌ CRITICAL ERROR: JWT_SECRET is too short for production use!');
+    console.error('Production JWT_SECRET must be at least 32 characters long.');
+    console.error('Current length:', process.env.JWT_SECRET.length);
+    process.exit(1);
+  }
+  
+  // Check for common weak/default secrets
+  const weakSecrets = [
+    'YOUR_REAL_JWT_SECRET_CHANGE_THIS_IN_PRODUCTION',
+    'default-secret-change-in-production',
+    'change-this-in-production',
+    'secret',
+    'jwt-secret',
+    'your-secret-key',
+    'YOUR_REAL_JWT_SECRET'
+  ];
+  
+  if (weakSecrets.some(weak => process.env.JWT_SECRET.toLowerCase().includes(weak.toLowerCase()))) {
+    console.error('❌ CRITICAL ERROR: JWT_SECRET appears to be using a default/weak value!');
+    console.error('This is extremely dangerous in production. Please generate a strong, unique secret.');
+    process.exit(1);
+  }
+  
+  console.log('✅ JWT_SECRET is set and validated for production');
 }
 
 // Connect to database
