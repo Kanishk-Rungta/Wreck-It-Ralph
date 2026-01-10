@@ -21,15 +21,20 @@ if (!process.env.MONGODB_URI) {
   process.exit(1);
 }
 
-// Enforce JWT_SECRET requirement - fail fast if missing
+// Enforce JWT_SECRET requirement in production; use a safe default in development
 if (!process.env.JWT_SECRET) {
-  console.error('❌ CRITICAL ERROR: JWT_SECRET environment variable is not set!');
-  console.error('JWT authentication cannot function without a secret.');
-  console.error('Please set JWT_SECRET in your .env file or environment variables.');
-  console.error('');
-  console.error('To generate a strong secret, run:');
-  console.error('  node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
-  process.exit(1);
+  if (process.env.NODE_ENV === 'production') {
+    console.error('❌ CRITICAL ERROR: JWT_SECRET environment variable is not set!');
+    console.error('JWT authentication cannot function without a secret.');
+    console.error('Please set JWT_SECRET in your .env file or environment variables.');
+    console.error('');
+    console.error('To generate a strong secret, run:');
+    console.error('  node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+    process.exit(1);
+  } else {
+    console.warn('⚠️  WARNING: JWT_SECRET is not set. Using development default (unsafe for production).');
+    process.env.JWT_SECRET = process.env.JWT_SECRET || 'default-dev-secret-DO-NOT-USE-IN-PRODUCTION';
+  }
 }
 
 // Validate JWT_SECRET strength in production

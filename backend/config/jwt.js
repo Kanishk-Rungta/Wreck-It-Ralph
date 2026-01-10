@@ -1,26 +1,27 @@
 import jwt from 'jsonwebtoken';
 
-// Require JWT_SECRET to be set - fail fast if missing
-const JWT_SECRET = process.env.JWT_SECRET;
+// Use JWT_SECRET from env; in production require it, otherwise fall back to a dev default
+let JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-  throw new Error(
-    '❌ CRITICAL: JWT_SECRET environment variable is not set!\n' +
-    'JWT authentication cannot function without a secret.\n' +
-    'Please set JWT_SECRET in your .env file or environment variables.\n' +
-    'Generate a strong secret using: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
-  );
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(`❌ CRITICAL: JWT_SECRET environment variable is not set!
+JWT authentication cannot function without a secret.
+Please set JWT_SECRET in your .env file or environment variables.
+Generate a strong secret using: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`);
+  } else {
+    console.warn('⚠️ WARNING: JWT_SECRET not set. Using development default (DO NOT USE IN PRODUCTION).');
+    JWT_SECRET = 'default-dev-secret-DO-NOT-USE-IN-PRODUCTION';
+  }
 }
 
 // Validate JWT_SECRET strength in production
 if (process.env.NODE_ENV === 'production') {
   if (JWT_SECRET.length < 32) {
-    throw new Error(
-      '❌ CRITICAL: JWT_SECRET is too short for production use!\n' +
-      'Production JWT_SECRET must be at least 32 characters long.\n' +
-      'Current length: ' + JWT_SECRET.length + '\n' +
-      'Generate a strong secret using: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
-    );
+    throw new Error(`❌ CRITICAL: JWT_SECRET is too short for production use!
+Production JWT_SECRET must be at least 32 characters long.
+Current length: ${JWT_SECRET.length}
+Generate a strong secret using: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`);
   }
   
   // Warn about common weak secrets
